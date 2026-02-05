@@ -17,3 +17,8 @@ jobs:
         run: chmod +x gradlew
       - name: Build iOS App
         run: ./gradlew :composeApp:assembleDebug
+      - name: Subir el instalador
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-debug
+          path: composeApp/build/outputs/ios/debugFramework/
