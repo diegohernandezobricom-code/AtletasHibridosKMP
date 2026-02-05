@@ -16,4 +16,4 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Build iOS App
-        run: ./gradlew iosApp:assembleDebug --stacktrace
+        run: ./gradlew :composeApp:assembleDebug
