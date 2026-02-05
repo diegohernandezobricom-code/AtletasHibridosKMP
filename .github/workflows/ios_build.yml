@@ -9,27 +9,27 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout del código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Dar permisos al Gradlew
-        run: chmod +x gradlew
-
-      - name: Construir Framework y Moverlo
+      - name: Build
         run: |
-          ./gradlew :composeApp:assembleDebug
-          mkdir -p output_ios
-          # Buscamos cualquier .framework y lo movemos a nuestra carpeta segura
-          find . -name "*.framework" -type d -exec cp -R {} output_ios/ \;
-
-      - name: Subir lo encontrado
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          
+          # ESTO ES LO IMPORTANTE: Listar todo para ver dónde quedó
+          echo "--- BUSCANDO EL TESORO ---"
+          find . -name "*.framework"
+          
+      - name: Subir Todo lo que huela a iOS
         uses: actions/upload-artifact@v4
         with:
-          name: ios-debug-framework
-          path: output_ios/
+          name: ios-debug-files
+          # Vamos a subir TODA la carpeta build para que no haya pierde
+          path: "**/build/bin/"
