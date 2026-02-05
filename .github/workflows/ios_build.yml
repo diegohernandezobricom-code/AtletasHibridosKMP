@@ -3,8 +3,6 @@ name: iOS Build
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -23,15 +21,17 @@ jobs:
       - name: Dar permisos al Gradlew
         run: chmod +x gradlew
 
-      - name: Construir Framework de iOS
-        run: ./gradlew :composeApp:assembleDebugAppleFrameworkForXcode
+      - name: Construir Proyecto
+        # Este comando es el "maestro", construye todo lo de iOS disponible
+        run: ./gradlew assembleDebug
 
       - name: Buscar y Subir el instalador
         uses: actions/upload-artifact@v4
         with:
           name: ios-app-artifact
-          # Esta ruta con asteriscos busca el archivo donde sea que haya quedado
+          # Buscamos cualquier cosa que parezca un ejecutable de iOS
           path: |
             **/build/bin/iosArm64/debugFramework/*.framework
-            **/build/outputs/*.zip
+            **/build/outputs/ios/**/*.zip
+            **/build/outputs/apple/**/*.zip
           if-no-files-found: warn
