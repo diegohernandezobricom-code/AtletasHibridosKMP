@@ -1,0 +1,19 @@
+name: Build iOS App
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      - name: Build iOS App
+        run: ./gradlew :iosApp:assembleDebug
