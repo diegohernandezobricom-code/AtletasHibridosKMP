@@ -1,24 +1,37 @@
-name: Build iOS App
+name: iOS Build
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: macos-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
+          distribution: 'zulu'
           java-version: '17'
-          distribution: 'temurin'
-      - name: Make gradlew executable
+
+      - name: Dar permisos al Gradlew
         run: chmod +x gradlew
-      - name: Build iOS App
-        run: ./gradlew :composeApp:assembleDebug
-      - name: Subir el instalador
+
+      - name: Construir Framework de iOS
+        run: ./gradlew :composeApp:assembleDebugAppleFrameworkForXcode
+
+      - name: Buscar y Subir el instalador
         uses: actions/upload-artifact@v4
         with:
-          name: ios-app-debug
-          path: composeApp/build/outputs/ios/debugFramework/
+          name: ios-app-artifact
+          # Esta ruta con asteriscos busca el archivo donde sea que haya quedado
+          path: |
+            **/build/bin/iosArm64/debugFramework/*.framework
+            **/build/outputs/*.zip
+          if-no-files-found: warn
