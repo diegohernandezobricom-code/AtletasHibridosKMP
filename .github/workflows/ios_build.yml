@@ -21,17 +21,15 @@ jobs:
       - name: Dar permisos al Gradlew
         run: chmod +x gradlew
 
-      - name: Construir Proyecto
-        # Este comando es el "maestro", construye todo lo de iOS disponible
-        run: ./gradlew assembleDebug
+      - name: Construir Framework y Moverlo
+        run: |
+          ./gradlew :composeApp:assembleDebug
+          mkdir -p output_ios
+          # Buscamos cualquier .framework y lo movemos a nuestra carpeta segura
+          find . -name "*.framework" -type d -exec cp -R {} output_ios/ \;
 
-      - name: Buscar y Subir el instalador
+      - name: Subir lo encontrado
         uses: actions/upload-artifact@v4
         with:
-          name: ios-app-artifact
-          # Buscamos cualquier cosa que parezca un ejecutable de iOS
-          path: |
-            **/build/bin/iosArm64/debugFramework/*.framework
-            **/build/outputs/ios/**/*.zip
-            **/build/outputs/apple/**/*.zip
-          if-no-files-found: warn
+          name: ios-debug-framework
+          path: output_ios/
